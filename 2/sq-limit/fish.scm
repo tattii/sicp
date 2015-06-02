@@ -1,0 +1,23 @@
+(load "bezier.scm")
+
+(define fish
+  (vertexes->painter
+   (append (bezier (make-vect 0.0 1.0)
+		   (make-vect 0.47 0.80)
+		   (make-vect 0.20 0.20)
+		   (make-vect 0.780 0.221) )
+	   (bezier (make-vect 0.780 0.221)
+		   (make-vect 0.79 0.15)
+		   (make-vect 0.82 0.07)
+		   (make-vect 1.0 0.0) )
+	   (bezier (make-vect 1.0 0.0)
+		   (make-vect 0.93 0.04)
+		   (make-vect 0.70 0.08)
+		   (make-vect 0.661 0.049) )
+	   (bezier (make-vect 0.661 0.049)
+		   (make-vect 0.43 0.25)
+		   (make-vect -0.27 0.40)
+		   (make-vect 0.0 1.0) )
+	   )
+   #t)
+)
