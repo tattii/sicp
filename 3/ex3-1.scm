@@ -1,0 +1,5 @@
+(define (make-accumulator sum)
+  (lambda (plus)
+    (begin (set! sum (+ sum plus))
+	   sum)
+))
