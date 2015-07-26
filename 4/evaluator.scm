@@ -16,6 +16,7 @@
    ((begin? exp) 
     (eval-sequence (begin-actions exp) env))
    ((cond? exp) (eval (cond->if exp) env))
+   ((let? exp) (eval (let->combination exp) env))
    ((application? exp)
     (my-apply (eval (operator exp) env)
 	   (list-of-values (operands exp) env)))
@@ -301,7 +302,6 @@
 (define (logical-rest-exps exps) (cdr exps))
 (define (logical-last-exp? exps) (null? (cdr exps)))
 
-
 ;; and
 (define (and? exp) (tagged-list? exp 'and))
 
@@ -316,7 +316,6 @@
 			(and-iter (logical-rest-exps exps)))))
   (and-iter (logical-exps exp)))
 
-
 ;; or
 (define (or? exp) (tagged-list? exp 'or))
 
@@ -330,4 +329,28 @@
 		  (else
 			(or-iter (logical-rest-exps exps)))))
   (or-iter (logical-exps exp)))
+
+;; ex 4.6 let
+(define (let? exp) (tagged-list? exp 'let))
+(define (let-defs exp) (cadr exp))
+(define (let-body exp) (cddr exp))
+
+(define (let->combination exp)
+  (let* ((defs (let-defs->params-args (let-defs exp)))
+		 (body (let-body exp))
+		 (params (car defs))
+		 (args (cdr defs)))
+	(cons
+	  (make-lambda params body)
+	  args)))
+
+(define (let-defs->params-args defs)
+  (define (convert-defs defs params args)
+	(if (null? defs)
+	  (cons params args)
+	  (let ((def (car defs)))
+		(convert-defs (cdr defs)
+					  (append params (list (car def)))
+					  (append args (list (cadr def)))))))
+  (convert-defs defs '() '()))
 

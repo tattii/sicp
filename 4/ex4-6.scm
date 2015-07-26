@@ -1,0 +1,22 @@
+(define (let? exp) (tagged-list? exp 'let))
+(define (let-defs exp) (cadr exp))
+(define (let-body exp) (cddr exp))
+
+(define (let->combination exp)
+  (let* ((defs (let-defs->params-args (let-defs exp)))
+		 (body (let-body exp))
+		 (params (car defs))
+		 (args (cdr defs)))
+	(cons
+	  (make-lambda params body)
+	  args)))
+
+(define (let-defs->params-args defs)
+  (define (convert-defs defs params args)
+	(if (null? defs)
+	  (cons params args)
+	  (let ((def (car defs)))
+		(convert-defs (cdr defs)
+					  (append params (list (car def)))
+					  (append args (list (cadr def)))))))
+  (convert-defs defs '() '()))
